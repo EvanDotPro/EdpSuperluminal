@@ -54,7 +54,7 @@ class Module
                     }
                     $declaration .= $r->isInterface() ? ' extends ' : ' implements ';
                     $declaration .= implode(', ', array_map(function($interface) use ($usesNames, $r) {
-                            $iReflection = new \Zend2\Code\Reflection\ClassReflection($interface);
+                            $iReflection = new \Zend\Code\Reflection\ClassReflection($interface);
                             return (array_key_exists($iReflection->getName(), $usesNames) ? ($usesNames[$iReflection->getName()] ?: $iReflection->getShortName()) : ((0 === strpos($iReflection->getName(), $r->getNamespaceName())) ? substr($iReflection->getName(), strlen($r->getNamespaceName()) + 1) : '\\' . $iReflection->getName()));
             
                         }, $interfaces)
