@@ -53,13 +53,12 @@ class Module
                         $interfaces = array_diff($interfaces, $iReflection->getInterfaceNames());
                     }
                     $declaration .= $r->isInterface() ? ' extends ' : ' implements ';
-                    $lastInterface = array_pop($interfaces);
-                    foreach ($interfaces as $interface) {
-                        $iReflection = new \Zend\Code\Reflection\ClassReflection($interface);
-                        $declaration .= (array_key_exists($iReflection->getName(), $usesNames) ? ($usesNames[$iReflection->getName()] ?: $iReflection->getShortName()) : ((0 === strpos($iReflection->getName(), $r->getNamespaceName())) ? substr($iReflection->getName(), strlen($r->getNamespaceName()) + 1) : '\\' . $iReflection->getName())) . ', ';
-                    }
-                    $iReflection = new \Zend\Code\Reflection\ClassReflection($lastInterface);
-                    $declaration .= array_key_exists($iReflection->getName(), $usesNames) ? ($usesNames[$iReflection->getName()] ?: $iReflection->getShortName()) : ((0 === strpos($iReflection->getName(), $r->getNamespaceName())) ? substr($iReflection->getName(), strlen($r->getNamespaceName()) + 1) : '\\' . $iReflection->getName());
+                    $declaration .= implode(', ', array_map(function($interface) use ($usesNames, $r) {
+                            $iReflection = new \Zend\Code\Reflection\ClassReflection($interface);
+                            return (array_key_exists($iReflection->getName(), $usesNames) ? ($usesNames[$iReflection->getName()] ?: $iReflection->getShortName()) : ((0 === strpos($iReflection->getName(), $r->getNamespaceName())) ? substr($iReflection->getName(), strlen($r->getNamespaceName()) + 1) : '\\' . $iReflection->getName()));
+            
+                        }, $interfaces)
+                    );
                 }
                 return "\nnamespace " 
                      . $r->getNamespaceName()
