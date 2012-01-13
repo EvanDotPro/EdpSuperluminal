@@ -3,6 +3,7 @@
 namespace EdpSuperluminal;
 
 use Zend\Code\Reflection\ClassReflection,
+    Zend\Code\Scanner\FileScanner,
     Zend\EventManager\StaticEventManager;
 
 /**
@@ -12,6 +13,8 @@ use Zend\Code\Reflection\ClassReflection,
  */
 class Module
 {
+    protected $knownClasses = array();
+
     /**
      * Attach events
      * 
@@ -31,17 +34,26 @@ class Module
      */
     public function cache($e)
     {
-        if (!$e->getRequest()->query()->get('buildCache') 
-            || file_exists(ZF_CLASS_CACHE)
-        ) {
+        if (!$e->getRequest()->query()->get('buildCache')) {
             return;
+        }
+
+        if (file_exists(ZF_CLASS_CACHE)) {
+            $this->reflectClassCache();
+            $code = file_get_contents(ZF_CLASS_CACHE);
+        } else {
+            $code = "<?php\n";
         }
     
         $classes = array_merge(get_declared_interfaces(), get_declared_classes());
-        $code = "<?php\n";
         foreach ($classes as $class) {
             // Skip the autoloader factory and this class
             if (in_array($class, array('Zend\Loader\AutoloaderFactory', __CLASS__))) {
+                continue;
+            }
+
+            // Skip any classes we already know about
+            if (in_array($class, $this->knownClasses)) {
                 continue;
             }
 
@@ -162,5 +174,16 @@ class Module
                . $declaration . "\n"
                . strstr($classContents, '{') // messes up when 'implements' is on separate line
                . "\n}\n";
+    }
+
+    /**
+     * Determine what classes are present in the cache
+     * 
+     * @return void
+     */
+    protected function reflectClassCache()
+    {
+        $scanner = new FileScanner(ZF_CLASS_CACHE);
+        $this->knownClasses = $scanner->getClassNames();
     }
 }

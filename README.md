@@ -18,10 +18,13 @@ Installation
 ------------
 
 - Clone this module into your `vendor/` directory and enable `EdpSuperluminal`
-- Add the following code to your `public/index.php` after chdir() and immediately following the AutoloaderFactory::factory invocation:
+- Add the following code to your `public/index.php` after chdir() and
+  immediately following the AutoloaderFactory::factory invocation:
 
         define('ZF_CLASS_CACHE', 'data/cache/classes.php.cache');
         if (file_exists(ZF_CLASS_CACHE)) require_once ZF_CLASS_CACHE;
 
 - In your browser, go to http://yourapp/?buildCache=1 to build the initial
-  class.
+  class. You should do this for any page that is (a) dependency heavy, and/or
+  (b) every page with a different dependency graph. Each call will append to
+  the cache with any newly discovered classes.
