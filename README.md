@@ -18,7 +18,7 @@ Installation
 ------------
 
 - Clone this module into your `vendor/` directory and enable `EdpSuperluminal`
-- Add the following code to your `public/index.php` after chdir() and before including the AutoloaderFactory file:
+- Add the following code to your `public/index.php` after chdir() and immediately following the AutoloaderFactory::factory invocation:
 
         define('ZF_CLASS_CACHE', 'data/cache/classes.php.cache');
         if (file_exists(ZF_CLASS_CACHE)) require_once ZF_CLASS_CACHE;

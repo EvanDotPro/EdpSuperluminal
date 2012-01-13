@@ -40,12 +40,25 @@ class Module
         $classes = array_merge(get_declared_interfaces(), get_declared_classes());
         $code = "<?php\n";
         foreach ($classes as $class) {
-            if (0 !== strpos($class, 'Zend\\')) {
-                // Skip ZF classes
+            // Skip the autoloader factory and this class
+            if (in_array($class, array('Zend\Loader\AutoloaderFactory', __CLASS__))) {
                 continue;
             }
 
             $class = new ClassReflection($class);
+
+            // Skip internal classes or classes from extensions
+            if ($class->isInternal()
+                || $class->getExtensionName()
+            ) {
+                continue;
+            }
+
+            // Skip ZF2-based autoloaders
+            if (in_array('Zend\Loader\SplAutoloader', $class->getInterfaceNames())) {
+                continue;
+            }
+
             $code .= static::getCacheCode($class);
         }
 
@@ -138,12 +151,16 @@ class Module
             }, $interfaces));
         }
 
+        $classContents = $r->getContents(false);
+        $classFileDir  = dirname($r->getFileName());
+        $classContents = str_replace('__DIR__', sprintf("'%s'", $classFileDir), $classContents);
+
         return "\nnamespace " 
                . $r->getNamespaceName()
                . " {\n"
                . $useString
                . $declaration . "\n"
-               . strstr($r->getContents(false), '{') // messes up when 'implements' is on separate line
+               . strstr($classContents, '{') // messes up when 'implements' is on separate line
                . "\n}\n";
     }
 }
