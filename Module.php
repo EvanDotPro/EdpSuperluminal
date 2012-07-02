@@ -20,10 +20,10 @@ class Module
      * 
      * @return void
      */
-    public function init()
+    public function init($e)
     {
-        $events = StaticEventManager::getInstance();
-        $events->attach('Zend\Mvc\Application', 'finish', array($this, 'cache'));
+        $events = $e->getEventManager()->getSharedManager();
+        $events->attach('application', 'finish', array($this, 'cache'));
     }
 
     /**
@@ -34,7 +34,7 @@ class Module
      */
     public function cache($e)
     {
-        if (!$e->getRequest()->query()->get('buildCache')) {
+        if (!$e->getRequest()->getQuery()->get('buildCache')) {
             return;
         }
 
