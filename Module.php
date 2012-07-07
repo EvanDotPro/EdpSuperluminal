@@ -17,7 +17,7 @@ class Module
 
     /**
      * Attach events
-     * 
+     *
      * @return void
      */
     public function init($e)
@@ -28,8 +28,8 @@ class Module
 
     /**
      * Cache declared interfaces and classes to a single file
-     * 
-     * @param  \Zend\Mvc\MvcEvent $e 
+     *
+     * @param  \Zend\Mvc\MvcEvent $e
      * @return void
      */
     public function cache($e)
@@ -44,7 +44,7 @@ class Module
         } else {
             $code = "<?php\n";
         }
-    
+
         $classes = array_merge(get_declared_interfaces(), get_declared_classes());
         foreach ($classes as $class) {
             // Skip the autoloader factory and this class
@@ -75,13 +75,15 @@ class Module
         }
 
         file_put_contents(ZF_CLASS_CACHE, $code);
+        // minify the file
+        file_put_contents(ZF_CLASS_CACHE, php_strip_whitespace(ZF_CLASS_CACHE));
     }
 
     /**
      * Generate code to cache from class reflection.
      *
      * This is a total mess, I know. Just wanted to flesh out the logic.
-     * @todo Refactor into a class, clean up logic, DRY it up, maybe move 
+     * @todo Refactor into a class, clean up logic, DRY it up, maybe move
      *       some of this into Zend\Code
      * @param  ClassReflection $r
      * @return string
@@ -90,7 +92,7 @@ class Module
     {
         $useString = '';
         $usesNames = array();
-        if (count($uses = $r->getDeclaringFile()->getUses())) { 
+        if (count($uses = $r->getDeclaringFile()->getUses())) {
             $useString = "\nuse ";
             $lastUse   = array_pop($uses);
 
@@ -137,11 +139,11 @@ class Module
         $declaration .= $r->getShortName();
 
         if ($parent = $r->getParentClass()) {
-            $parentName   = array_key_exists($parent->getName(), $usesNames) 
-                          ? ($usesNames[$parent->getName()] ?: $parent->getShortName()) 
-                          : ((0 === strpos($parent->getName(), $r->getNamespaceName())) 
-                            ? substr($parent->getName(), strlen($r->getNamespaceName()) + 1) 
-                            : '\\' . $parent->getName()); 
+            $parentName   = array_key_exists($parent->getName(), $usesNames)
+                          ? ($usesNames[$parent->getName()] ?: $parent->getShortName())
+                          : ((0 === strpos($parent->getName(), $r->getNamespaceName()))
+                            ? substr($parent->getName(), strlen($r->getNamespaceName()) + 1)
+                            : '\\' . $parent->getName());
 
             $declaration .= " extends {$parentName}";
         }
@@ -155,10 +157,10 @@ class Module
             $declaration .= $r->isInterface() ? ' extends ' : ' implements ';
             $declaration .= implode(', ', array_map(function($interface) use ($usesNames, $r) {
                 $iReflection = new ClassReflection($interface);
-                return (array_key_exists($iReflection->getName(), $usesNames) 
-                       ? ($usesNames[$iReflection->getName()] ?: $iReflection->getShortName()) 
-                       : ((0 === strpos($iReflection->getName(), $r->getNamespaceName())) 
-                         ? substr($iReflection->getName(), strlen($r->getNamespaceName()) + 1) 
+                return (array_key_exists($iReflection->getName(), $usesNames)
+                       ? ($usesNames[$iReflection->getName()] ?: $iReflection->getShortName())
+                       : ((0 === strpos($iReflection->getName(), $r->getNamespaceName()))
+                         ? substr($iReflection->getName(), strlen($r->getNamespaceName()) + 1)
                          : '\\' . $iReflection->getName()));
             }, $interfaces));
         }
@@ -167,7 +169,7 @@ class Module
         $classFileDir  = dirname($r->getFileName());
         $classContents = str_replace('__DIR__', sprintf("'%s'", $classFileDir), $classContents);
 
-        return "\nnamespace " 
+        return "\nnamespace "
                . $r->getNamespaceName()
                . " {\n"
                . $useString
@@ -178,7 +180,7 @@ class Module
 
     /**
      * Determine what classes are present in the cache
-     * 
+     *
      * @return void
      */
     protected function reflectClassCache()
