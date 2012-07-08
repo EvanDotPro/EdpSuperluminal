@@ -34,7 +34,7 @@ class Module
      */
     public function cache($e)
     {
-        if (!$e->getRequest()->getQuery()->get('buildCache')) {
+        if ($e->getRequest()->getQuery()->get('EDPSUPERLUMINAL_CACHE', null) === null) {
             return;
         }
 
@@ -47,6 +47,11 @@ class Module
 
         $classes = array_merge(get_declared_interfaces(), get_declared_classes());
         foreach ($classes as $class) {
+            // Skip non-Zend classes
+            if (0 !== strpos($class, 'Zend')) {
+                continue;
+            }
+
             // Skip the autoloader factory and this class
             if (in_array($class, array('Zend\Loader\AutoloaderFactory', __CLASS__))) {
                 continue;
@@ -59,15 +64,16 @@ class Module
 
             $class = new ClassReflection($class);
 
-            // Skip internal classes or classes from extensions
-            if ($class->isInternal()
-                || $class->getExtensionName()
-            ) {
+            // Skip ZF2-based autoloaders
+            if (in_array('Zend\Loader\SplAutoloader', $class->getInterfaceNames())) {
                 continue;
             }
 
-            // Skip ZF2-based autoloaders
-            if (in_array('Zend\Loader\SplAutoloader', $class->getInterfaceNames())) {
+            // Skip internal classes or classes from extensions
+            // (this shouldn't happen, as we're only caching Zend classes)
+            if ($class->isInternal()
+                || $class->getExtensionName()
+            ) {
                 continue;
             }
 
@@ -93,29 +99,17 @@ class Module
         $useString = '';
         $usesNames = array();
         if (count($uses = $r->getDeclaringFile()->getUses())) {
-            $useString = "\nuse ";
-            $lastUse   = array_pop($uses);
-
             foreach ($uses as $use) {
                 $usesNames[$use['use']] = $use['as'];
 
-                $useString .= "{$use['use']}";
+                $useString .= "use {$use['use']}";
 
                 if ($use['as']) {
                     $useString .= " as {$use['as']}";
                 }
 
-                $useString .= ",\n";
+                $useString .= ";\n";
             }
-
-            $usesNames[$lastUse['use']] = $lastUse['as'];
-            $useString .= "{$lastUse['use']}";
-
-            if ($lastUse['as']) {
-                $useString .= " as {$lastUse['as']}";
-            }
-
-            $useString .= ";\n\n";
         }
 
         $declaration = '';
@@ -138,13 +132,18 @@ class Module
 
         $declaration .= $r->getShortName();
 
-        if ($parent = $r->getParentClass()) {
+        $parentName = false;
+        if (($parent = $r->getParentClass()) && $r->getNamespaceName()) {
             $parentName   = array_key_exists($parent->getName(), $usesNames)
                           ? ($usesNames[$parent->getName()] ?: $parent->getShortName())
                           : ((0 === strpos($parent->getName(), $r->getNamespaceName()))
                             ? substr($parent->getName(), strlen($r->getNamespaceName()) + 1)
                             : '\\' . $parent->getName());
+        } else if ($parent && !$r->getNamespaceName()) {
+            $parentName = '\\' . $parent->getName();
+        }
 
+        if ($parentName) {
             $declaration .= " extends {$parentName}";
         }
 
@@ -167,15 +166,17 @@ class Module
 
         $classContents = $r->getContents(false);
         $classFileDir  = dirname($r->getFileName());
-        $classContents = str_replace('__DIR__', sprintf("'%s'", $classFileDir), $classContents);
+        $classContents = trim(str_replace('__DIR__', sprintf("'%s'", $classFileDir), $classContents));
 
-        return "\nnamespace "
+        $return = "\nnamespace "
                . $r->getNamespaceName()
                . " {\n"
                . $useString
                . $declaration . "\n"
-               . strstr($classContents, '{') // messes up when 'implements' is on separate line
+               . $classContents
                . "\n}\n";
+
+        return $return;
     }
 
     /**
