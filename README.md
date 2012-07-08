@@ -19,10 +19,12 @@ Installation
 ------------
 
 - Clone this module into your `vendor/` directory and enable `EdpSuperluminal`
-- Add the following line at the very top of your `public/index.php` file:
+- Add the following line in `public/index.php` immediately after the `chdir()`
+  call:
 
 ```php
 <?php
+chdir(dirname(__DIR__));
 define('ZF_CLASS_CACHE', 'data/cache/classes.php.cache'); if (file_exists(ZF_CLASS_CACHE)) require_once ZF_CLASS_CACHE;
 ```
 
