@@ -57,6 +57,10 @@ class Module
                 continue;
             }
 
+            if ($class === 'Zend\Loader\SplAutoloader') {
+                continue;
+            }
+
             // Skip any classes we already know about
             if (in_array($class, $this->knownClasses)) {
                 continue;
