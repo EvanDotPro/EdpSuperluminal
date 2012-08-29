@@ -23,7 +23,7 @@ class Module
     public function init($e)
     {
         $events = $e->getEventManager()->getSharedManager();
-        $events->attach('application', 'finish', array($this, 'cache'));
+        $events->attach('Zend\Mvc\Application', 'finish', array($this, 'cache'));
     }
 
     /**
