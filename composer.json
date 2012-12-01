@@ -1,0 +1,30 @@
+{
+    "name": "evandotpro/edp-superluminal",
+    "description": "Class Cache ZF2 Module to reduce stat calls and generally autoloading overhead",
+    "license": "BSD-3-Clause",
+    "type": "library",
+    "keywords": [
+        "zendframework",
+        "performance"
+    ],
+    "homepage": "https://github.com/EvanDotPro/EdpSuperluminal",
+    "authors": [
+        {
+            "name": "Evan Coury",
+            "email": "me@evancoury.com",
+            "homepage": "http://blog.evan.pro/"
+        }
+    ],
+    "require": {
+        "zendframework/zend-modulemanager": "2.*",
+        "zendframework/zend-code": "2.*",
+        "zendframework/zend-eventmanager": "2.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "classmap": [
+                "Module.php"
+            ]
+        }
+    }
+}
