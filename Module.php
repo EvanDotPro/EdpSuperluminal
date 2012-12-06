@@ -5,6 +5,7 @@ namespace EdpSuperluminal;
 use Zend\Code\Reflection\ClassReflection,
     Zend\Code\Scanner\FileScanner,
     Zend\EventManager\StaticEventManager;
+use Zend\Console\Request as ConsoleRequest;
 
 /**
  * Create a class cache of all classes used.
@@ -34,7 +35,9 @@ class Module
      */
     public function cache($e)
     {
-        if ($e->getRequest()->getQuery()->get('EDPSUPERLUMINAL_CACHE', null) === null) {
+        $request = $e->getRequest();
+        if ($request instanceof ConsoleRequest ||
+            $request->getQuery()->get('EDPSUPERLUMINAL_CACHE', null) === null) {
             return;
         }
 
