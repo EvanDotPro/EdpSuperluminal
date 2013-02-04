@@ -21,10 +21,8 @@
         "zendframework/zend-eventmanager": "2.*"
     },
     "autoload": {
-        "psr-0": {
-            "classmap": [
-                "Module.php"
-            ]
-        }
+        "classmap": [
+            "Module.php"
+        ]
     }
 }
