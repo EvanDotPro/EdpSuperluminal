@@ -68,6 +68,7 @@ class Module
             if (in_array($class, $this->knownClasses)) {
                 continue;
             }
+            $this->knownClasses[] = $class;
 
             $class = new ClassReflection($class);
 
@@ -194,6 +195,6 @@ class Module
     protected function reflectClassCache()
     {
         $scanner = new FileScanner(ZF_CLASS_CACHE);
-        $this->knownClasses = $scanner->getClassNames();
+        $this->knownClasses = array_unique($scanner->getClassNames());
     }
 }
