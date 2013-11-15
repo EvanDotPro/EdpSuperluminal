@@ -72,6 +72,13 @@ class Module
 
             $class = new ClassReflection($class);
 
+            // Skip any Annotation classes
+            $docBlock = $class->getDocBlock();
+            if ($docBlock) {
+                if ($docBlock->getTags('Annotation'))
+                    continue;
+            }
+
             // Skip ZF2-based autoloaders
             if (in_array('Zend\Loader\SplAutoloader', $class->getInterfaceNames())) {
                 continue;
