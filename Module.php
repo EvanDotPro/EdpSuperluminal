@@ -2,9 +2,10 @@
 
 namespace EdpSuperluminal;
 
-use Zend\Code\Reflection\ClassReflection,
-    Zend\Code\Scanner\FileScanner,
-    Zend\EventManager\StaticEventManager;
+use Zend\Code\Reflection\ClassReflection;
+use Zend\Code\Scanner\FileScanner;
+use Zend\EventManager\StaticEventManager;
+use Zend\Mvc\MvcEvent;
 use Zend\Console\Request as ConsoleRequest;
 
 /**
@@ -19,9 +20,10 @@ class Module
     /**
      * Attach events
      *
+     * @param  \Zend\Mvc\MvcEvent $e
      * @return void
      */
-    public function init($e)
+    public function init(MvcEvent $e)
     {
         $events = $e->getEventManager()->getSharedManager();
         $events->attach('Zend\Mvc\Application', 'finish', array($this, 'cache'));
@@ -33,11 +35,12 @@ class Module
      * @param  \Zend\Mvc\MvcEvent $e
      * @return void
      */
-    public function cache($e)
+    public function cache(MvcEvent $e)
     {
         $request = $e->getRequest();
         if ($request instanceof ConsoleRequest ||
             $request->getQuery()->get('EDPSUPERLUMINAL_CACHE', null) === null) {
+
             return;
         }
 
@@ -79,9 +82,7 @@ class Module
 
             // Skip internal classes or classes from extensions
             // (this shouldn't happen, as we're only caching Zend classes)
-            if ($class->isInternal()
-                || $class->getExtensionName()
-            ) {
+            if ($class->isInternal() || $class->getExtensionName()) {
                 continue;
             }
 
