@@ -6,6 +6,8 @@ use Zend\Code\Reflection\ClassReflection,
     Zend\Code\Scanner\FileScanner,
     Zend\EventManager\StaticEventManager;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Mvc\MvcEvent;
+use Zend\ModuleManager\ModuleManager;
 
 /**
  * Create a class cache of all classes used.
@@ -16,24 +18,32 @@ class Module
 {
     protected $knownClasses = array();
 
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
+    
     /**
      * Attach events
-     *
+     * @param ModuleManager $e
      * @return void
      */
-    public function init($e)
+    public function init(ModuleManager $e)
     {
+        $config = $e->getModule('EdpSuperluminal')->getConfig();
+        $config = $config['EdpSuperluminal']['cacheEvent'];
+        
         $events = $e->getEventManager()->getSharedManager();
-        $events->attach('Zend\Mvc\Application', 'finish', array($this, 'cache'));
+        $events->attach($config['class'], $config['event'], array($this, 'cache'), $config['priority']);
     }
 
     /**
      * Cache declared interfaces and classes to a single file
      *
-     * @param  \Zend\Mvc\MvcEvent $e
+     * @param  MvcEvent $e
      * @return void
      */
-    public function cache($e)
+    public function cache(MvcEvent $e)
     {
         $request = $e->getRequest();
         if ($request instanceof ConsoleRequest ||
