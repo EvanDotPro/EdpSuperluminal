@@ -1,5 +1,4 @@
 <?php
-
 namespace EdpSuperluminal;
 
 use Zend\Code\Reflection\ClassReflection,
@@ -51,6 +50,8 @@ class Module
             return;
         }
 
+        $config = $e->getApplication()->getConfig();
+        
         if (file_exists(ZF_CLASS_CACHE)) {
             $this->reflectClassCache();
             $code = file_get_contents(ZF_CLASS_CACHE);
@@ -99,8 +100,11 @@ class Module
         }
 
         file_put_contents(ZF_CLASS_CACHE, $code);
+        
         // minify the file
-        file_put_contents(ZF_CLASS_CACHE, php_strip_whitespace(ZF_CLASS_CACHE));
+        if(isset($config['EdpSuperluminal']['strip_whitespace']) && $config['EdpSuperluminal']['strip_whitespace'] === true){
+            file_put_contents(ZF_CLASS_CACHE, php_strip_whitespace(ZF_CLASS_CACHE));
+        }
     }
 
     /**
