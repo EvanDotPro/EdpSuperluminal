@@ -1,11 +1,12 @@
 <?php
-
 namespace EdpSuperluminal;
 
 use Zend\Code\Reflection\ClassReflection,
     Zend\Code\Scanner\FileScanner,
     Zend\EventManager\StaticEventManager;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Mvc\MvcEvent;
+use Zend\ModuleManager\ModuleManager;
 
 /**
  * Create a class cache of all classes used.
@@ -16,24 +17,32 @@ class Module
 {
     protected $knownClasses = array();
 
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
+    
     /**
      * Attach events
-     *
+     * @param ModuleManager $e
      * @return void
      */
-    public function init($e)
+    public function init(ModuleManager $e)
     {
+        $config = $e->getModule('EdpSuperluminal')->getConfig();
+        $config = $config['EdpSuperluminal']['cacheEvent'];
+        
         $events = $e->getEventManager()->getSharedManager();
-        $events->attach('Zend\Mvc\Application', 'finish', array($this, 'cache'));
+        $events->attach($config['class'], $config['event'], array($this, 'cache'), $config['priority']);
     }
 
     /**
      * Cache declared interfaces and classes to a single file
      *
-     * @param  \Zend\Mvc\MvcEvent $e
+     * @param  MvcEvent $e
      * @return void
      */
-    public function cache($e)
+    public function cache(MvcEvent $e)
     {
         $request = $e->getRequest();
         if ($request instanceof ConsoleRequest ||
@@ -41,6 +50,8 @@ class Module
             return;
         }
 
+        $config = $e->getApplication()->getConfig();
+        
         if (file_exists(ZF_CLASS_CACHE)) {
             $this->reflectClassCache();
             $code = file_get_contents(ZF_CLASS_CACHE);
@@ -89,8 +100,11 @@ class Module
         }
 
         file_put_contents(ZF_CLASS_CACHE, $code);
+        
         // minify the file
-        file_put_contents(ZF_CLASS_CACHE, php_strip_whitespace(ZF_CLASS_CACHE));
+        if(isset($config['EdpSuperluminal']['strip_whitespace']) && $config['EdpSuperluminal']['strip_whitespace'] === true){
+            file_put_contents(ZF_CLASS_CACHE, php_strip_whitespace(ZF_CLASS_CACHE));
+        }
     }
 
     /**
