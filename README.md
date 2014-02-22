@@ -23,9 +23,9 @@ Installation
   call:
 
 ```php
-<?php
 chdir(dirname(__DIR__));
-define('ZF_CLASS_CACHE', 'data/cache/classes.php.cache'); if (file_exists(ZF_CLASS_CACHE)) require_once ZF_CLASS_CACHE;
+define('ZF_CLASS_CACHE', 'data/cache/classes.php.cache');
+if (file_exists(ZF_CLASS_CACHE)) require_once ZF_CLASS_CACHE;
 ```
 
 - In your browser, go to http://yourapp/?EDPSUPERLUMINAL\_CACHE to build the initial
