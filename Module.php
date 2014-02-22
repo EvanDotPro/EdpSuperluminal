@@ -4,7 +4,7 @@ namespace EdpSuperluminal;
 
 use Zend\Code\Reflection\ClassReflection,
     Zend\Code\Scanner\FileScanner,
-    Zend\EventManager\StaticEventManager;
+    Zend\Mvc\MvcEvent;
 use Zend\Console\Request as ConsoleRequest;
 
 /**
@@ -19,9 +19,11 @@ class Module
     /**
      * Attach events
      *
+     * @param MvcEvent $e
+     *
      * @return void
      */
-    public function init($e)
+    public function init(MvcEvent $e)
     {
         $events = $e->getEventManager()->getSharedManager();
         $events->attach('Zend\Mvc\Application', 'finish', array($this, 'cache'));
@@ -30,10 +32,10 @@ class Module
     /**
      * Cache declared interfaces and classes to a single file
      *
-     * @param  \Zend\Mvc\MvcEvent $e
+     * @param  MvcEvent $e
      * @return void
      */
-    public function cache($e)
+    public function cache(MvcEvent $e)
     {
         $request = $e->getRequest();
         if ($request instanceof ConsoleRequest ||
