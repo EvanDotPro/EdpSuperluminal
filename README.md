@@ -18,7 +18,9 @@ For best results, use this module in conjunction with APC.
 Installation
 ------------
 
-- Clone this module into your `vendor/` directory and enable `EdpSuperluminal`
+- Add `"evandotpro/edp-superluminal": "dev-master",` to your `composer.json` and run `php composer.phar update`
+  or clone this module into your `vendor/` directory
+- Enable `EdpSuperluminal` in `config/application.config.php`
 - Add the following line in `public/index.php` immediately after the `chdir()`
   call:
 
