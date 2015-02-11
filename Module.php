@@ -50,7 +50,10 @@ class Module
 
         $classes = array_merge(get_declared_interfaces(), get_declared_classes());
 
-        $cacheCodeGenerator = new CacheCodeGenerator();
+        $cacheCodeGenerator = new CacheCodeGenerator(
+            new FileReflectionUseStatementService(),
+            new ClassDeclarationService()
+        );
 
         foreach ($classes as $class) {
             // Skip non-Zend classes

@@ -7,25 +7,41 @@ use Zend\Code\Reflection\ClassReflection;
 class CacheCodeGenerator
 {
     /**
+     * @var FileReflectionUseStatementService
+     */
+    protected $fileReflectionService;
+
+    /**
+     * @var ClassDeclarationService
+     */
+    protected $classDeclarationService;
+
+    /**
+     * @param FileReflectionUseStatementService $fileReflectionService
+     * @param ClassDeclarationService $classDeclarationService
+     */
+    public function __construct(FileReflectionUseStatementService $fileReflectionService, ClassDeclarationService $classDeclarationService)
+    {
+        $this->fileReflectionService = $fileReflectionService;
+        $this->classDeclarationService = $classDeclarationService;
+    }
+
+    /**
      * Generate code to cache from class reflection.
      *
-     * @todo clean up logic, DRY it up, maybe move
-     *       some of this into Zend\Code
+     * @todo maybe move some of this into Zend\Code
+     *
      * @param  ClassReflection $classReflection
      * @return string
      */
     public function getCacheCode(ClassReflection $classReflection)
     {
-        $fileReflectionService = new FileReflectionUseStatementService();
-
-        $classDeclarationService = new ClassDeclarationService();
-
-        $useStatementDto = $fileReflectionService->getUseStatementDto($classReflection->getDeclaringFile());
+        $useStatementDto = $this->fileReflectionService->getUseStatementDto($classReflection->getDeclaringFile());
 
         $useString = $useStatementDto->getUseString();
         $useNames = $useStatementDto->getUseNames();
 
-        $declaration = $classDeclarationService->getClassDeclaration($classReflection, $useNames);
+        $declaration = $this->classDeclarationService->getClassDeclaration($classReflection, $useNames);
 
         $classContents = $classReflection->getContents(false);
         $classFileDir  = dirname($classReflection->getFileName());
