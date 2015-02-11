@@ -27,8 +27,6 @@ class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
 
         Phake::when($mockClassReflection)->getInterfaceNames()->thenReturn(array());
 
-        $result = $this->sut->getCacheCode($mockClassReflection);
-
-        $this->assertTrue(true);
+        $this->assertNotNull($this->sut->getCacheCode($mockClassReflection));
     }
 }
