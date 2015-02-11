@@ -16,13 +16,16 @@
         }
     ],
     "require": {
-        "zendframework/zend-modulemanager": "2.*",
-        "zendframework/zend-code": "2.*",
-        "zendframework/zend-eventmanager": "2.*"
+        "zendframework/zendframework": "2.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.5.*",
+        "phake/phake": "1.0.*"
     },
     "autoload": {
         "classmap": [
-            "Module.php"
+            "Module.php",
+            "src/"
         ]
     }
 }
