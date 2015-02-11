@@ -7,65 +7,121 @@ use Zend\Code\Reflection\ClassReflection;
 class ClassDeclarationService
 {
     /**
-     * @param ClassReflection $r
+     * Retrieve a class's full class declaration
+     * i.e. 'class ClassReflection extends ReflectionClass implements ReflectionInterface'
+     *
+     * @param ClassReflection $reflection
      * @param $useNames
      * @return string
      */
-    public function getClassDeclaration(ClassReflection $r, $useNames)
+    public function getClassDeclaration(ClassReflection $reflection, $useNames)
     {
         $declaration = '';
 
-        if ($r->isAbstract() && !$r->isInterface()) {
-            $declaration .= 'abstract ';
+        $declaration .= $this->getClassType($reflection);
+
+        $declaration .= $reflection->getShortName();
+
+        $declaration .= $this->getClassExtendsStatement($reflection, $useNames);
+
+        $declaration .= $this->getInterfaceStatement($reflection, $useNames);
+
+        return $declaration;
+    }
+
+    /**
+     * Determine the class type (abstract, final, interface, class)
+     *
+     * @param ClassReflection $reflection
+     * @return string
+     */
+    protected function getClassType(ClassReflection $reflection)
+    {
+        $classType = '';
+
+        if ($reflection->isAbstract() && !$reflection->isInterface()) {
+            $classType = 'abstract ';
         }
 
-        if ($r->isFinal()) {
-            $declaration .= 'final ';
+        if ($reflection->isFinal()) {
+            $classType = 'final ';
         }
 
-        if ($r->isInterface()) {
-            $declaration .= 'interface ';
+        if ($reflection->isInterface()) {
+            $classType = 'interface ';
         }
 
-        if (!$r->isInterface()) {
-            $declaration .= 'class ';
+        if (!$reflection->isInterface()) {
+            $classType = 'class ';
         }
 
-        $declaration .= $r->getShortName();
+        return $classType;
+    }
 
+    /**
+     * Retrieve a class's `extends` statement
+     *
+     * @param ClassReflection $reflection
+     * @param $useNames
+     * @return string
+     */
+    protected function getClassExtendsStatement(ClassReflection $reflection, $useNames)
+    {
+        $extendsStatement = '';
         $parentName = false;
-        if (($parent = $r->getParentClass()) && $r->getNamespaceName()) {
+
+        if (($parent = $reflection->getParentClass()) && $reflection->getNamespaceName()) {
             $parentName = array_key_exists($parent->getName(), $useNames)
                 ? ($useNames[$parent->getName()] ? : $parent->getShortName())
-                : ((0 === strpos($parent->getName(), $r->getNamespaceName()))
-                    ? substr($parent->getName(), strlen($r->getNamespaceName()) + 1)
+                : ((0 === strpos($parent->getName(), $reflection->getNamespaceName()))
+                    ? substr($parent->getName(), strlen($reflection->getNamespaceName()) + 1)
                     : '\\' . $parent->getName());
-        } else if ($parent && !$r->getNamespaceName()) {
+        } else if ($parent && !$reflection->getNamespaceName()) {
             $parentName = '\\' . $parent->getName();
         }
 
         if ($parentName) {
-            $declaration .= " extends {$parentName}";
+            $extendsStatement = " extends {$parentName}";
         }
 
-        $interfaces = array_diff($r->getInterfaceNames(), $parent ? $parent->getInterfaceNames() : array());
+        return $extendsStatement;
+    }
+
+    /**
+     * Retrieve a class's `implements` statement
+     *
+     * @param ClassReflection $reflection
+     * @param $useNames
+     * @return string
+     */
+    protected function getInterfaceStatement(ClassReflection $reflection, $useNames)
+    {
+        $interfaceStatement = '';
+        $parent = $reflection->getParentClass();
+
+        $interfaces = array_diff($reflection->getInterfaceNames(), $parent ? $parent->getInterfaceNames() : array());
+
         if (count($interfaces)) {
+
             foreach ($interfaces as $interface) {
                 $iReflection = new ClassReflection($interface);
                 $interfaces = array_diff($interfaces, $iReflection->getInterfaceNames());
             }
-            $declaration .= $r->isInterface() ? ' extends ' : ' implements ';
-            $declaration .= implode(', ', array_map(function ($interface) use ($useNames, $r) {
+
+            $interfaceStatement .= $reflection->isInterface() ? ' extends ' : ' implements ';
+            $interfaceStatement .= implode(', ', array_map(function ($interface) use ($useNames, $reflection) {
+
                 $iReflection = new ClassReflection($interface);
+
                 return (array_key_exists($iReflection->getName(), $useNames)
                     ? ($useNames[$iReflection->getName()] ? : $iReflection->getShortName())
-                    : ((0 === strpos($iReflection->getName(), $r->getNamespaceName()))
-                        ? substr($iReflection->getName(), strlen($r->getNamespaceName()) + 1)
+                    : ((0 === strpos($iReflection->getName(), $reflection->getNamespaceName()))
+                        ? substr($iReflection->getName(), strlen($reflection->getNamespaceName()) + 1)
                         : '\\' . $iReflection->getName()));
+
             }, $interfaces));
-            return $declaration;
         }
 
-        return $declaration;
+        return $interfaceStatement;
     }
 }
