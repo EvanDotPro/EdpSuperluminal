@@ -3,7 +3,6 @@
 namespace EdpSuperluminal;
 
 use Zend\Code\Reflection\ClassReflection;
-use Zend\Code\Reflection\FileReflection;
 
 class CacheCodeGenerator
 {
@@ -17,7 +16,9 @@ class CacheCodeGenerator
      */
     public function getCacheCode(ClassReflection $r)
     {
-        $useStatementDto = $this->getUseStatementDto($r->getDeclaringFile());
+        $fileReflectionService = new FileReflectionUseStatementService();
+
+        $useStatementDto = $fileReflectionService->getUseStatementDto($r->getDeclaringFile());
 
         $useString = $useStatementDto->getUseString();
         $useNames = $useStatementDto->getUseNames();
@@ -37,31 +38,6 @@ class CacheCodeGenerator
             . "\n}\n";
 
         return $return;
-    }
-
-    /**
-     * @param FileReflection $declaringFile
-     * @return UseStatementDto
-     */
-    private function getUseStatementDto(FileReflection $declaringFile)
-    {
-        $useString = '';
-        $usesNames = array();
-        if (count($uses = $declaringFile->getUses())) {
-            foreach ($uses as $use) {
-                $usesNames[$use['use']] = $use['as'];
-
-                $useString .= "use {$use['use']}";
-
-                if ($use['as']) {
-                    $useString .= " as {$use['as']}";
-                }
-
-                $useString .= ";\n";
-            }
-        }
-
-        return new UseStatementDto($useString, $usesNames);
     }
 
     /**
