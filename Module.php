@@ -6,7 +6,6 @@ use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
 use EdpSuperluminal\ClassDeclaration\ClassTypeService;
 use EdpSuperluminal\ClassDeclaration\ExtendsStatementService;
 use EdpSuperluminal\ClassDeclaration\InterfaceStatementService;
-use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Scanner\FileScanner;
 use Zend\Console\Request as ConsoleRequest;
 
@@ -55,41 +54,14 @@ class Module
 
         $cacheCodeGenerator = $this->buildCacheCodeGenerator();
 
+        $shouldCacheClass = new ShouldCacheClassSpecification();
+
         foreach ($classes as $class) {
-            // Skip non-Zend classes
-            if (0 !== strpos($class, 'Zend')) {
+            if (!$shouldCacheClass->isSatisfiedBy($class, __CLASS__, $this->knownClasses)) {
                 continue;
             }
 
-            // Skip the autoloader factory and this class
-            if (in_array($class, array('Zend\Loader\AutoloaderFactory', __CLASS__))) {
-                continue;
-            }
-
-            if ($class === 'Zend\Loader\SplAutoloader') {
-                continue;
-            }
-
-            // Skip any classes we already know about
-            if (in_array($class, $this->knownClasses)) {
-                continue;
-            }
             $this->knownClasses[] = $class;
-
-            $class = new ClassReflection($class);
-
-            // Skip ZF2-based autoloaders
-            if (in_array('Zend\Loader\SplAutoloader', $class->getInterfaceNames())) {
-                continue;
-            }
-
-            // Skip internal classes or classes from extensions
-            // (this shouldn't happen, as we're only caching Zend classes)
-            if ($class->isInternal()
-                || $class->getExtensionName()
-            ) {
-                continue;
-            }
 
             $code .= $cacheCodeGenerator->getCacheCode($class);
         }
