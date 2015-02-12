@@ -2,9 +2,12 @@
 
 namespace EdpSuperluminal;
 
-use Zend\Code\Reflection\ClassReflection,
-    Zend\Code\Scanner\FileScanner,
-    Zend\EventManager\StaticEventManager;
+use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
+use EdpSuperluminal\ClassDeclaration\ClassTypeService;
+use EdpSuperluminal\ClassDeclaration\ExtendsStatementService;
+use EdpSuperluminal\ClassDeclaration\InterfaceStatementService;
+use Zend\Code\Reflection\ClassReflection;
+use Zend\Code\Scanner\FileScanner;
 use Zend\Console\Request as ConsoleRequest;
 
 /**
@@ -50,10 +53,7 @@ class Module
 
         $classes = array_merge(get_declared_interfaces(), get_declared_classes());
 
-        $cacheCodeGenerator = new CacheCodeGenerator(
-            new FileReflectionUseStatementService(),
-            new ClassDeclarationService()
-        );
+        $cacheCodeGenerator = $this->buildCacheCodeGenerator();
 
         foreach ($classes as $class) {
             // Skip non-Zend classes
@@ -108,5 +108,24 @@ class Module
     {
         $scanner = new FileScanner(ZF_CLASS_CACHE);
         $this->knownClasses = array_unique($scanner->getClassNames());
+    }
+
+    /**
+     * @return CacheCodeGenerator
+     */
+    protected function buildCacheCodeGenerator()
+    {
+        $fileReflectionUseStatementService = new FileReflectionUseStatementService();
+
+        $classDeclarationService = new ClassDeclarationService(
+            new ClassTypeService(),
+            new ExtendsStatementService($fileReflectionUseStatementService),
+            new InterfaceStatementService($fileReflectionUseStatementService)
+        );
+
+        return new CacheCodeGenerator(
+            new FileReflectionUseStatementService(),
+            $classDeclarationService
+        );
     }
 }

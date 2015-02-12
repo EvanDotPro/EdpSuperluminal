@@ -8,27 +8,45 @@ class FileReflectionUseStatementService
 {
     /**
      * @param FileReflection $declaringFile
-     * @return UseStatementDto
+     * @return string
      */
-    public function getUseStatementDto(FileReflection $declaringFile)
+    public function getUseString(FileReflection $declaringFile)
     {
         $useString = '';
-        $usesNames = array();
 
-        if (count($uses = $declaringFile->getUses())) {
-            foreach ($uses as $use) {
-                $usesNames[$use['use']] = $use['as'];
-
-                $useString .= "use {$use['use']}";
-
-                if ($use['as']) {
-                    $useString .= " as {$use['as']}";
-                }
-
-                $useString .= ";\n";
-            }
+        if (!count($uses = $declaringFile->getUses())) {
+            return $useString;
         }
 
-        return new UseStatementDto($useString, $usesNames);
+        foreach ($uses as $use) {
+            $useString .= "use {$use['use']}";
+
+            if ($use['as']) {
+                $useString .= " as {$use['as']}";
+            }
+
+            $useString .= ";\n";
+        }
+
+        return $useString;
+    }
+
+    /**
+     * @param FileReflection $declaringFile
+     * @return array
+     */
+    public function getUseNames(FileReflection $declaringFile)
+    {
+        $usesNames = array();
+
+        if (!count($uses = $declaringFile->getUses())) {
+            return $usesNames;
+        }
+
+        foreach ($uses as $use) {
+            $usesNames[$use['use']] = $use['as'];
+        }
+
+        return $usesNames;
     }
 }

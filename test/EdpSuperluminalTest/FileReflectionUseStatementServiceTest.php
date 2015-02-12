@@ -23,9 +23,7 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testReturnsEmptyUseStringIfNoUseStatements()
     {
-        $dto = $this->sut->getUseStatementDto($this->declaringFile);
-
-        $this->assertEquals('', $dto->getUseString());
+        $this->assertEquals('', $this->sut->getUseString($this->declaringFile));
     }
 
     public function testSingleUseStatement()
@@ -36,9 +34,7 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
 
         Phake::when($this->declaringFile)->getUses()->thenReturn(array(array('use' => $namespace, 'as' => null)));
 
-        $dto = $this->sut->getUseStatementDto($this->declaringFile);
-
-        $this->assertEquals($expectedUseString, $dto->getUseString());
+        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->declaringFile));
     }
 
     public function testSingleUseWithAsStatement()
@@ -51,9 +47,7 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
 
         Phake::when($this->declaringFile)->getUses()->thenReturn(array(array('use' => $namespace, 'as' => $as)));
 
-        $dto = $this->sut->getUseStatementDto($this->declaringFile);
-
-        $this->assertEquals($expectedUseString, $dto->getUseString());
+        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->declaringFile));
     }
 
     public function testMultipleUseStatements()
@@ -74,8 +68,6 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
             array('use' => $namespace3, 'as' => $as3)
         ));
 
-        $dto = $this->sut->getUseStatementDto($this->declaringFile);
-
-        $this->assertEquals($expectedUseString, $dto->getUseString());
+        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->declaringFile));
     }
 }

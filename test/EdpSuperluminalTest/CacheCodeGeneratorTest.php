@@ -3,10 +3,11 @@
 namespace EdpSuperluminalTest;
 
 use EdpSuperluminal\CacheCodeGenerator;
-use EdpSuperluminal\ClassDeclarationService;
+use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
 use EdpSuperluminal\FileReflectionUseStatementService;
-use EdpSuperluminal\UseStatementDto;
 use Phake;
+use Zend\Code\Reflection\ClassReflection;
+use Zend\Code\Reflection\FileReflection;
 
 class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,21 +24,21 @@ class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     protected $classDeclarationService;
 
+    /**
+     * @var ClassReflection
+     */
     protected $mockClassReflection;
 
+    /**
+     * @var FileReflection
+     */
     protected $mockFileReflection;
-
-    protected $mockUseStatementDto;
 
     public function setUp()
     {
-        $this->mockUseStatementDto = Phake::mock('EdpSuperluminal\UseStatementDto');
-
         $this->fileReflectionService = Phake::mock('EdpSuperluminal\FileReflectionUseStatementService');
 
-        Phake::when($this->fileReflectionService)->getUseStatementDto(Phake::anyParameters())->thenReturn(new UseStatementDto());
-
-        $this->classDeclarationService = Phake::mock('EdpSuperluminal\ClassDeclarationService');
+        $this->classDeclarationService = Phake::mock('EdpSuperluminal\ClassDeclaration\ClassDeclarationService');
 
         $this->sut = new CacheCodeGenerator($this->fileReflectionService, $this->classDeclarationService);
 

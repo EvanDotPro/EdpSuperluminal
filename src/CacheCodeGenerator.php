@@ -2,6 +2,7 @@
 
 namespace EdpSuperluminal;
 
+use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
 use Zend\Code\Reflection\ClassReflection;
 
 class CacheCodeGenerator
@@ -36,12 +37,9 @@ class CacheCodeGenerator
      */
     public function getCacheCode(ClassReflection $classReflection)
     {
-        $useStatementDto = $this->fileReflectionService->getUseStatementDto($classReflection->getDeclaringFile());
+        $useString = $this->fileReflectionService->getUseString($classReflection->getDeclaringFile());
 
-        $useString = $useStatementDto->getUseString();
-        $useNames = $useStatementDto->getUseNames();
-
-        $declaration = $this->classDeclarationService->getClassDeclaration($classReflection, $useNames);
+        $declaration = $this->classDeclarationService->getClassDeclaration($classReflection);
 
         $classContents = $classReflection->getContents(false);
         $classFileDir  = dirname($classReflection->getFileName());
