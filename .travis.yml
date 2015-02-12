@@ -1,5 +1,6 @@
 language: php
 install: composer install
+script: phpunit --bootstrap vendor/autoload.php test/
 php:
   - 5.3
   - 5.4
