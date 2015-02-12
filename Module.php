@@ -57,7 +57,7 @@ class Module
         $shouldCacheClass = new ShouldCacheClassSpecification();
 
         foreach ($classes as $class) {
-            if (!$shouldCacheClass->isSatisfiedBy($class, __CLASS__, $this->knownClasses)) {
+            if (!$shouldCacheClass->isSatisfiedBy($class, $this->knownClasses)) {
                 continue;
             }
 

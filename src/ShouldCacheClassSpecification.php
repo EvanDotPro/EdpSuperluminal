@@ -6,15 +6,15 @@ use Zend\Code\Reflection\ClassReflection;
 
 class ShouldCacheClassSpecification
 {
-    public function isSatisfiedBy($class, $currentClass, array $knownClasses)
+    public function isSatisfiedBy($class, array $knownClasses)
     {
         // Skip non-Zend classes
         if (0 !== strpos($class, 'Zend')) {
             return false;
         }
 
-        // Skip the autoloader factory and this class
-        if (in_array($class, array('Zend\Loader\AutoloaderFactory', $currentClass))) {
+        // Skip the autoloader factory
+        if ($class === 'Zend\Loader\AutoloaderFactory') {
             return false;
         }
 
@@ -38,6 +38,11 @@ class ShouldCacheClassSpecification
 
         // Skip ZF2-based autoloaders
         if (in_array('Zend\Loader\SplAutoloader', $class->getInterfaceNames())) {
+            return false;
+        }
+
+        // Skip classes in this module
+        if (0 === strpos($class->getNamespaceName(), 'EdpSuperluminal')) {
             return false;
         }
 
