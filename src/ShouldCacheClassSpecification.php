@@ -4,6 +4,9 @@ namespace EdpSuperluminal;
 
 use Zend\Code\Reflection\ClassReflection;
 
+/**
+ * todo - this can be broken down into individual specifications and probably should
+ */
 class ShouldCacheClassSpecification
 {
     public function isSatisfiedBy($class, array $knownClasses)
