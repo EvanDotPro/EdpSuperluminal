@@ -19,6 +19,9 @@ class CacheBuilderFactory implements FactoryInterface
         /** @var CacheCodeGenerator $cacheCodeGenerator */
         $cacheCodeGenerator = $serviceLocator->get('EdpSuperluminal\CacheCodeGenerator');
 
-        return new CacheBuilderFactory($cacheCodeGenerator, new ShouldCacheClassSpecification());
+        /** @var ShouldCacheClassSpecification $shouldCacheClass */
+        $shouldCacheClass = $serviceLocator->get('EdpSuperluminal\ShouldCacheClass');
+
+        return new CacheBuilder($cacheCodeGenerator, $shouldCacheClass);
     }
 }
