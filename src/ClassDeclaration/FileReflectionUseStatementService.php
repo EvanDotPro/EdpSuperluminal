@@ -1,6 +1,6 @@
 <?php
 
-namespace EdpSuperluminal;
+namespace EdpSuperluminal\ClassDeclaration;
 
 use Zend\Code\Reflection\FileReflection;
 

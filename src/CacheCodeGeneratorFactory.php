@@ -5,6 +5,7 @@ namespace EdpSuperluminal;
 use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
 use EdpSuperluminal\ClassDeclaration\ClassTypeService;
 use EdpSuperluminal\ClassDeclaration\ExtendsStatementService;
+use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use EdpSuperluminal\ClassDeclaration\InterfaceStatementService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

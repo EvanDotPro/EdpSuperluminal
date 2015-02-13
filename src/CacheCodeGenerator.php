@@ -3,6 +3,7 @@
 namespace EdpSuperluminal;
 
 use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
+use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use Zend\Code\Reflection\ClassReflection;
 
 class CacheCodeGenerator

@@ -2,7 +2,7 @@
 
 namespace EdpSuperluminalTest;
 
-use EdpSuperluminal\FileReflectionUseStatementService;
+use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use Phake;
 use Zend\Code\Reflection\FileReflection;
 

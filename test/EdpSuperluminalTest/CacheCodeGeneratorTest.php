@@ -4,7 +4,7 @@ namespace EdpSuperluminalTest;
 
 use EdpSuperluminal\CacheCodeGenerator;
 use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
-use EdpSuperluminal\FileReflectionUseStatementService;
+use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\FileReflection;
@@ -36,7 +36,7 @@ class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->fileReflectionService = Phake::mock('EdpSuperluminal\FileReflectionUseStatementService');
+        $this->fileReflectionService = Phake::mock('EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService');
 
         $this->classDeclarationService = Phake::mock('EdpSuperluminal\ClassDeclaration\ClassDeclarationService');
 
