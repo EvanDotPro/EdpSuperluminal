@@ -70,4 +70,29 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedUseString, $this->sut->getUseString($this->declaringFile));
     }
+
+    public function testReturnsEmptyArrayIfTheresNoUseStatements()
+    {
+        $this->assertEquals(array(), $this->sut->getUseNames($this->declaringFile));
+    }
+
+
+    public function testReturnsFormattedArrayOfUseStatements()
+    {
+        $uses = array(
+            array('use' => 'Zend\Console\Request', 'as' => 'ConsoleRequest'),
+            array('use' => 'Zend\Mvc\MvcEvent', 'as' => null)
+        );
+
+        $expected = array(
+            'Zend\Console\Request' => 'ConsoleRequest',
+            'Zend\Mvc\MvcEvent' => null
+        );
+
+        Phake::when($this->declaringFile)->getUses()->thenReturn($uses);
+
+        $this->assertEquals($expected, $this->sut->getUseNames($this->declaringFile));
+    }
+
+
 }
