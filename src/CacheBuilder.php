@@ -2,6 +2,7 @@
 
 namespace EdpSuperluminal;
 
+use EdpSuperluminal\ShouldCacheClass\ShouldCacheClassSpecification;
 use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Scanner\FileScanner;
 
@@ -49,7 +50,12 @@ class CacheBuilder
         foreach ($classes as $class) {
             $class = new ClassReflection($class);
 
-            if (!$this->shouldCacheClass->isSatisfiedBy($class, $this->knownClasses)) {
+            if (!$this->shouldCacheClass->isSatisfiedBy($class)) {
+                continue;
+            }
+
+            // Skip any classes we already know about
+            if (in_array($class->getName(), $this->knownClasses)) {
                 continue;
             }
 
