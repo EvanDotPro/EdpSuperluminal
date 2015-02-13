@@ -43,6 +43,7 @@ class Module
             'factories' => array(
                 'EdpSuperluminal\CacheCodeGenerator'     => 'EdpSuperluminal\CacheCodeGeneratorFactory',
                 'EdpSuperluminal\CacheBuilder'     => 'EdpSuperluminal\CacheBuilderFactory',
+                'EdpSuperluminal\ShouldCacheClass'     => 'EdpSuperluminal\ShouldCacheClass\ShouldCacheClassSpecificationFactory',
             )
         );
     }
