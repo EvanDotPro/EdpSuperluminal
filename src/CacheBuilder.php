@@ -2,6 +2,7 @@
 
 namespace EdpSuperluminal;
 
+use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Scanner\FileScanner;
 
 class CacheBuilder
@@ -46,11 +47,13 @@ class CacheBuilder
         $classes = array_merge(get_declared_interfaces(), get_declared_classes());
 
         foreach ($classes as $class) {
+            $class = new ClassReflection($class);
+
             if (!$this->shouldCacheClass->isSatisfiedBy($class, $this->knownClasses)) {
                 continue;
             }
 
-            $this->knownClasses[] = $class;
+            $this->knownClasses[] = $class->getName();
 
             $code .= $this->cacheCodeGenerator->getCacheCode($class);
         }

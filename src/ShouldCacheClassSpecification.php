@@ -9,28 +9,28 @@ use Zend\Code\Reflection\ClassReflection;
  */
 class ShouldCacheClassSpecification
 {
-    public function isSatisfiedBy($class, array $knownClasses)
+    public function isSatisfiedBy(ClassReflection $class, array $knownClasses)
     {
+        $className = $class->getName();
+
         // Skip non-Zend classes
-        if (0 !== strpos($class, 'Zend')) {
+        if (0 !== strpos($className, 'Zend')) {
             return false;
         }
 
         // Skip the autoloader factory
-        if ($class === 'Zend\Loader\AutoloaderFactory') {
+        if ($className === 'Zend\Loader\AutoloaderFactory') {
             return false;
         }
 
-        if ($class === 'Zend\Loader\SplAutoloader') {
+        if ($className === 'Zend\Loader\SplAutoloader') {
             return false;
         }
 
         // Skip any classes we already know about
-        if (in_array($class, $knownClasses)) {
+        if (in_array($className, $knownClasses)) {
             return false;
         }
-
-        $class = new ClassReflection($class);
 
         // Skip any Annotation classes
         $docBlock = $class->getDocBlock();
