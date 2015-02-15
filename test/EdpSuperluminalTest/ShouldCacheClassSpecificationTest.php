@@ -39,6 +39,9 @@ class ShouldCacheClassSpecificationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->sut->isSatisfiedBy($this->mockClassReflection));
     }
 
+    /**
+     * @covers \EdpSuperluminal\ShouldCacheClass\SpecificationInterface::isSatisfiedBy
+     */
     public function testShouldNotCacheIfOneSpecificationFails()
     {
         $specifications = array(
