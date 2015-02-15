@@ -44,6 +44,7 @@ class Module
                 'EdpSuperluminal\CacheCodeGenerator'     => 'EdpSuperluminal\CacheCodeGeneratorFactory',
                 'EdpSuperluminal\CacheBuilder'     => 'EdpSuperluminal\CacheBuilderFactory',
                 'EdpSuperluminal\ShouldCacheClass'     => 'EdpSuperluminal\ShouldCacheClass\ShouldCacheClassSpecificationFactory',
+                'EdpSuperluminal\ClassDeclarationService'     => 'EdpSuperluminal\ClassDeclaration\ClassDeclarationServiceFactory',
             )
         );
     }
