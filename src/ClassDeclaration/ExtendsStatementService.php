@@ -24,25 +24,35 @@ class ExtendsStatementService
      */
     public function getClassExtendsStatement(ClassReflection $reflection)
     {
-        $useNames = $this->fileReflectionUseStatementService->getUseNames($reflection->getDeclaringFile());
-
         $extendsStatement = '';
-        $parentName = false;
 
-        if (($parent = $reflection->getParentClass()) && $reflection->getNamespaceName()) {
-            $parentName = array_key_exists($parent->getName(), $useNames)
-                ? ($useNames[$parent->getName()] ? : $parent->getShortName())
-                : ((0 === strpos($parent->getName(), $reflection->getNamespaceName()))
-                    ? substr($parent->getName(), strlen($reflection->getNamespaceName()) + 1)
-                    : '\\' . $parent->getName());
-        } else if ($parent && !$reflection->getNamespaceName()) {
-            $parentName = '\\' . $parent->getName();
-        }
+        $parentName = $this->getParentName($reflection);
 
         if ($parentName) {
             $extendsStatement = " extends {$parentName}";
         }
 
         return $extendsStatement;
+    }
+
+    private function getParentName(ClassReflection $classReflection)
+    {
+        $useNames = $this->fileReflectionUseStatementService->getUseNames($classReflection->getDeclaringFile());
+        $parentName = false;
+
+        if (($parent = $classReflection->getParentClass()) && $classReflection->getNamespaceName()) {
+
+            if (array_key_exists($parent->getName(), $useNames)) {
+                $parentName = ($useNames[$parent->getName()] ? : $parent->getShortName());
+            } else if (((0 === strpos($parent->getName(), $classReflection->getNamespaceName())))) {
+                $parentName = substr($parent->getName(), strlen($classReflection->getNamespaceName()) + 1);
+            } else {
+                $parentName = '\\' . $parent->getName();
+            }
+        } else if ($parent && !$classReflection->getNamespaceName()) {
+            $parentName = '\\' . $parent->getName();
+        }
+
+        return $parentName;
     }
 }
