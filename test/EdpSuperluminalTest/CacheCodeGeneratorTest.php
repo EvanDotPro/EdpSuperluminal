@@ -3,6 +3,7 @@
 namespace EdpSuperluminalTest;
 
 use EdpSuperluminal\CacheCodeGenerator;
+use EdpSuperluminal\CacheCodeGeneratorFactory;
 use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
 use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use Phake;
@@ -65,6 +66,18 @@ class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedCacheCode, $cacheCode);
     }
+
+    public function testFactory()
+    {
+        $cacheCodeGeneratorFactory = new CacheCodeGeneratorFactory();
+
+        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+
+        Phake::when($serviceLocator)->get('EdpSuperluminal\ClassDeclarationService')->thenReturn($this->classDeclarationService);
+
+        $this->assertTrue($cacheCodeGeneratorFactory->createService($serviceLocator) instanceof CacheCodeGenerator);
+    }
+
 
     protected function getExpectedCacheCode($namespace, $useString, $declaration, $classContents)
     {
