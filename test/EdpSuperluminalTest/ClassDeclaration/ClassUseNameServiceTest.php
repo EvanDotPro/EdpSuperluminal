@@ -3,6 +3,7 @@
 namespace EdpSuperluminalTest\ClassDeclaration;
 
 use EdpSuperluminal\ClassDeclaration\ClassUseNameService;
+use EdpSuperluminal\ClassDeclaration\ClassUseNameServiceFactory;
 use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
@@ -32,7 +33,14 @@ class ClassUseNameServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->useStatementService = Phake::mock('EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService');
 
-        $this->sut = new ClassUseNameService($this->useStatementService);
+
+        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+
+        Phake::when($serviceLocator)->get('EdpSuperluminal\ClassDeclaration\UseStatementService')->thenReturn($this->useStatementService);
+
+        $factory = new ClassUseNameServiceFactory();
+
+        $this->sut = $factory->createService($serviceLocator);
 
         $this->mockClassReflection = Phake::mock('Zend\Code\Reflection\ClassReflection');
 
