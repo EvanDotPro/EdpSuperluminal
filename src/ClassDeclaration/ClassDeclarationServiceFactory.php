@@ -15,12 +15,13 @@ class ClassDeclarationServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $useStatementService = new FileReflectionUseStatementService();
+        /** @var ClassUseNameService $classUseNameService */
+        $classUseNameService = $serviceLocator->get('EdpSuperluminal\ClassDeclaration\ClassUseNameService');
 
         return new ClassDeclarationService(
             new ClassTypeService(),
-            new ExtendsStatementService($useStatementService),
-            new InterfaceStatementService($useStatementService)
+            new ExtendsStatementService($classUseNameService),
+            new InterfaceStatementService($classUseNameService)
         );
     }
 }

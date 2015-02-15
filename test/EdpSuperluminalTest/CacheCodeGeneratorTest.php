@@ -74,6 +74,7 @@ class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
         $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
 
         Phake::when($serviceLocator)->get('EdpSuperluminal\ClassDeclarationService')->thenReturn($this->classDeclarationService);
+        Phake::when($serviceLocator)->get('EdpSuperluminal\ClassDeclaration\UseStatementService')->thenReturn(new FileReflectionUseStatementService());
 
         $this->assertTrue($cacheCodeGeneratorFactory->createService($serviceLocator) instanceof CacheCodeGenerator);
     }

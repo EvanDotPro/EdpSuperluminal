@@ -2,8 +2,8 @@
 
 namespace EdpSuperluminalTest\ClassDeclaration;
 
+use EdpSuperluminal\ClassDeclaration\ClassUseNameService;
 use EdpSuperluminal\ClassDeclaration\ExtendsStatementService;
-use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\FileReflection;
@@ -13,8 +13,8 @@ class ExtendsStatementServiceTest extends \PHPUnit_Framework_TestCase
     /** @var ExtendsStatementService */
     protected $sut;
 
-    /** @var FileReflectionUseStatementService */
-    protected $useStatementService;
+    /** @var ClassUseNameService */
+    protected $classUseNameService;
 
     /**
      * @var ClassReflection
@@ -28,9 +28,9 @@ class ExtendsStatementServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->useStatementService = Phake::mock('EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService');
+        $this->classUseNameService = Phake::mock('EdpSuperluminal\ClassDeclaration\ClassUseNameService');
 
-        $this->sut = new ExtendsStatementService($this->useStatementService);
+        $this->sut = new ExtendsStatementService($this->classUseNameService);
 
         $this->mockClassReflection = Phake::mock('Zend\Code\Reflection\ClassReflection');
 
@@ -46,37 +46,15 @@ class ExtendsStatementServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $this->sut->getClassExtendsStatement($this->mockClassReflection));
     }
 
-    public function testExtendsAClassWhichIsUsed()
+    public function testExtendsAClass()
     {
         $parent = Phake::mock('Zend\Code\Reflection\ClassReflection');
 
         Phake::when($this->mockClassReflection)->getParentClass()->thenReturn($parent);
 
-        $useNames = array('Zend\ServiceManager\ServiceManager' => null);
-
-        Phake::when($this->useStatementService)->getUseNames(Phake::anyParameters())->thenReturn($useNames);
-
-        Phake::when($parent)->getName()->thenReturn('Zend\ServiceManager\ServiceManager');
-
-        Phake::when($parent)->getShortName()->thenReturn('ServiceManager');
+        Phake::when($this->classUseNameService)->getClassUseName(Phake::anyParameters())->thenReturn('ServiceManager');
 
         $this->assertEquals(' extends ServiceManager', $this->sut->getClassExtendsStatement($this->mockClassReflection));
-    }
-
-    public function testExtendsAClassWhichHasNotBeenUsedAndIsInTheSameNamespace()
-    {
-        $this->mockParent();
-
-        $this->assertEquals(' extends ServiceManager\ServiceManager', $this->sut->getClassExtendsStatement($this->mockClassReflection));
-    }
-
-    public function testExtendsAClassWhichHasNotBeenUsedAndHasADifferentNamespace()
-    {
-        Phake::when($this->mockClassReflection)->getNamespaceName()->thenReturn('Phake');
-
-        $this->mockParent();
-
-        $this->assertEquals(' extends \Zend\ServiceManager\ServiceManager', $this->sut->getClassExtendsStatement($this->mockClassReflection));
     }
 
     public function testHasNoNamespaceAndExtendsAClassWhichHasNotBeenUsed()
@@ -94,9 +72,7 @@ class ExtendsStatementServiceTest extends \PHPUnit_Framework_TestCase
 
         Phake::when($this->mockClassReflection)->getParentClass()->thenReturn($parent);
 
-        $useNames = array();
-
-        Phake::when($this->useStatementService)->getUseNames(Phake::anyParameters())->thenReturn($useNames);
+        Phake::when($this->classUseNameService)->getClassUseName()->thenReturn('Zend\ServiceManager\ServiceManager');
 
         Phake::when($parent)->getName()->thenReturn('Zend\ServiceManager\ServiceManager');
 

@@ -7,13 +7,13 @@ use Zend\Code\Reflection\ClassReflection;
 class InterfaceStatementService
 {
     /**
-     * @var FileReflectionUseStatementService
+     * @var ClassUseNameService
      */
-    protected $fileReflectionUseStatementService;
+    protected $classUseNameService;
 
-    public function __construct(FileReflectionUseStatementService $fileReflectionUseStatementService)
+    public function __construct(ClassUseNameService $classUseNameService)
     {
-        $this->fileReflectionUseStatementService = $fileReflectionUseStatementService;
+        $this->classUseNameService = $classUseNameService;
     }
 
     /**
@@ -24,8 +24,6 @@ class InterfaceStatementService
      */
     public function getInterfaceStatement(ClassReflection $reflection)
     {
-        $useNames = $this->fileReflectionUseStatementService->getUseNames($reflection->getDeclaringFile());
-
         $interfaceStatement = '';
         $parent = $reflection->getParentClass();
 
@@ -39,16 +37,14 @@ class InterfaceStatementService
             }
 
             $interfaceStatement .= $reflection->isInterface() ? ' extends ' : ' implements ';
-            $interfaceStatement .= implode(', ', array_map(function ($interface) use ($useNames, $reflection) {
 
-                $iReflection = new ClassReflection($interface);
+            $classUseNameService = $this->classUseNameService;
 
-                return (array_key_exists($iReflection->getName(), $useNames)
-                    ? ($useNames[$iReflection->getName()] ? : $iReflection->getShortName())
-                    : ((0 === strpos($iReflection->getName(), $reflection->getNamespaceName()))
-                        ? substr($iReflection->getName(), strlen($reflection->getNamespaceName()) + 1)
-                        : '\\' . $iReflection->getName()));
+            $interfaceStatement .= implode(', ', array_map(function ($interface) use ($classUseNameService, $reflection) {
 
+                $interfaceReflection = new ClassReflection($interface);
+
+                return $classUseNameService->getClassUseName($reflection, $interfaceReflection);
             }, $interfaces));
         }
 

@@ -7,13 +7,13 @@ use Zend\Code\Reflection\ClassReflection;
 class ExtendsStatementService
 {
     /**
-     * @var FileReflectionUseStatementService
+     * @var ClassUseNameService
      */
-    protected $fileReflectionUseStatementService;
+    protected $classUseNameService;
 
-    public function __construct(FileReflectionUseStatementService $fileReflectionUseStatementService)
+    public function __construct(ClassUseNameService $classUseNameService)
     {
-        $this->fileReflectionUseStatementService = $fileReflectionUseStatementService;
+        $this->classUseNameService = $classUseNameService;
     }
 
     /**
@@ -37,18 +37,10 @@ class ExtendsStatementService
 
     private function getParentName(ClassReflection $classReflection)
     {
-        $useNames = $this->fileReflectionUseStatementService->getUseNames($classReflection->getDeclaringFile());
         $parentName = false;
 
         if (($parent = $classReflection->getParentClass()) && $classReflection->getNamespaceName()) {
-
-            if (array_key_exists($parent->getName(), $useNames)) {
-                $parentName = ($useNames[$parent->getName()] ? : $parent->getShortName());
-            } else if (((0 === strpos($parent->getName(), $classReflection->getNamespaceName())))) {
-                $parentName = substr($parent->getName(), strlen($classReflection->getNamespaceName()) + 1);
-            } else {
-                $parentName = '\\' . $parent->getName();
-            }
+            $parentName = $this->classUseNameService->getClassUseName($classReflection, $parent);
         } else if ($parent && !$classReflection->getNamespaceName()) {
             $parentName = '\\' . $parent->getName();
         }

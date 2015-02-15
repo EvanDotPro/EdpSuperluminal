@@ -17,7 +17,8 @@ class CacheCodeGeneratorFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $useStatementService = new FileReflectionUseStatementService();
+        /** @var FileReflectionUseStatementService $useStatementService */
+        $useStatementService = $serviceLocator->get('EdpSuperluminal\ClassDeclaration\UseStatementService');
 
         /** @var ClassDeclarationService $classDeclarationService */
         $classDeclarationService = $serviceLocator->get('EdpSuperluminal\ClassDeclarationService');

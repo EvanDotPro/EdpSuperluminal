@@ -6,6 +6,7 @@ use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
 use EdpSuperluminal\ClassDeclaration\ClassDeclarationServiceFactory;
 use EdpSuperluminal\ClassDeclaration\ClassTypeService;
 use EdpSuperluminal\ClassDeclaration\ExtendsStatementService;
+use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use EdpSuperluminal\ClassDeclaration\InterfaceStatementService;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
@@ -63,6 +64,10 @@ class ClassDeclarationTest extends \PHPUnit_Framework_TestCase
         $factory = new ClassDeclarationServiceFactory();
 
         $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+
+        Phake::when($serviceLocator)
+            ->get('EdpSuperluminal\ClassDeclaration\ClassUseNameService')
+            ->thenReturn(Phake::mock('EdpSuperluminal\ClassDeclaration\ClassUseNameService'));
 
         $this->assertTrue($factory->createService($serviceLocator) instanceof ClassDeclarationService);
     }

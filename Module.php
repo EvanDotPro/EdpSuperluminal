@@ -40,11 +40,15 @@ class Module
     public function getServiceConfig()
     {
         return array(
+            'invokables' => array(
+                'EdpSuperluminal\ClassDeclaration\UseStatementService' => 'EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService',
+            ),
             'factories' => array(
                 'EdpSuperluminal\CacheCodeGenerator'     => 'EdpSuperluminal\CacheCodeGeneratorFactory',
                 'EdpSuperluminal\CacheBuilder'     => 'EdpSuperluminal\CacheBuilderFactory',
                 'EdpSuperluminal\ShouldCacheClass'     => 'EdpSuperluminal\ShouldCacheClass\ShouldCacheClassSpecificationFactory',
                 'EdpSuperluminal\ClassDeclarationService'     => 'EdpSuperluminal\ClassDeclaration\ClassDeclarationServiceFactory',
+                'EdpSuperluminal\ClassDeclaration\ClassUseNameService'     => 'EdpSuperluminal\ClassDeclaration\ClassUseNameServiceFactory',
             )
         );
     }
