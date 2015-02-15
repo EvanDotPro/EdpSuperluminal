@@ -19,15 +19,25 @@ class ShouldCacheClassSpecificationFactory implements FactoryInterface
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
+     * @param array|null $specificationClasses
      * @throws \Exception
      * @return mixed
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function createService(ServiceLocatorInterface $serviceLocator, $specificationClasses = null)
     {
+        if (is_null($specificationClasses)) {
+            $specificationClasses = $this->specificationClasses;
+        }
+
         $specifications = array();
 
-        foreach ($this->specificationClasses as $specificationClass) {
+        foreach ($specificationClasses as $specificationClass) {
             $specificationClass = 'EdpSuperluminal\ShouldCacheClass\\' . $specificationClass;
+
+            if (!class_exists($specificationClass)) {
+                throw new \Exception("The specification '{$specificationClass}' does not exist!");
+            }
+
             $specification = new $specificationClass();
 
             if (!$specification instanceof SpecificationInterface) {

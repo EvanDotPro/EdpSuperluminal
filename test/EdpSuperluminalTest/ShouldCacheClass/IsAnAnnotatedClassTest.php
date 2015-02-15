@@ -28,12 +28,26 @@ class IsAnAnnotatedClassTest extends \PHPUnit_Framework_TestCase
         $classReflection = new ClassReflection('EdpSuperluminalTest\ShouldCacheClass\NonAnnotatedClass');
         $this->assertFalse($this->sut->isSatisfiedBy($classReflection));
     }
+
+    public function testAClassWithDocBlockButNoTags()
+    {
+        $classReflection = new ClassReflection('EdpSuperluminalTest\ShouldCacheClass\AlmostAnnotatedClass');
+        $this->assertFalse($this->sut->isSatisfiedBy($classReflection));
+    }
 }
 
 /**
  * @annotation
  */
 class AnnotatedClass
+{
+    public $a;
+}
+
+/**
+ *
+ */
+class AlmostAnnotatedClass
 {
     public $a;
 }

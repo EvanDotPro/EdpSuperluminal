@@ -52,6 +52,28 @@ class ShouldCacheClassSpecificationTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->sut->isSatisfiedBy($this->mockClassReflection));
     }
 
+    public function testFactoryThrowsExceptionIfASpecificationDoesNotImplementSpecificationInterface()
+    {
+        $this->setExpectedException('\Exception');
+
+        $shouldCacheClassFactory = new ShouldCacheClassSpecificationFactory();
+
+        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+
+        $this->sut = $shouldCacheClassFactory->createService($serviceLocator, array('FakeClass'));
+    }
+
+    public function testFactoryThrowsExceptionIfASpecificationDoesNotExist()
+    {
+        $this->setExpectedException('\Exception');
+
+        $shouldCacheClassFactory = new ShouldCacheClassSpecificationFactory();
+
+        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+
+        $this->sut = $shouldCacheClassFactory->createService($serviceLocator, array('Nonexistant'));
+    }
+
     protected function getMockSpecification($isSatisfied = false)
     {
         $specification = Phake::mock('EdpSuperluminal\ShouldCacheClass\SpecificationInterface');
@@ -60,4 +82,11 @@ class ShouldCacheClassSpecificationTest extends \PHPUnit_Framework_TestCase
 
         return $specification;
     }
+}
+
+namespace EdpSuperluminal\ShouldCacheClass;
+
+class FakeClass
+{
+
 }

@@ -17,19 +17,19 @@ class ClassTypeService
         $classType = '';
 
         if ($reflection->isAbstract() && !$reflection->isInterface()) {
-            $classType = 'abstract ';
+            $classType .= 'abstract ';
         }
 
         if ($reflection->isFinal()) {
-            $classType = 'final ';
+            $classType .= 'final ';
         }
 
         if ($reflection->isInterface()) {
-            $classType = 'interface ';
+            $classType .= 'interface ';
         }
 
         if (!$reflection->isInterface()) {
-            $classType = 'class ';
+            $classType .= 'class ';
         }
 
         return $classType;
