@@ -3,6 +3,7 @@
 namespace EdpSuperluminalTest\ClassDeclaration;
 
 use EdpSuperluminal\ClassDeclaration\ClassDeclarationService;
+use EdpSuperluminal\ClassDeclaration\ClassDeclarationServiceFactory;
 use EdpSuperluminal\ClassDeclaration\ClassTypeService;
 use EdpSuperluminal\ClassDeclaration\ExtendsStatementService;
 use EdpSuperluminal\ClassDeclaration\InterfaceStatementService;
@@ -55,5 +56,14 @@ class ClassDeclarationTest extends \PHPUnit_Framework_TestCase
         Phake::when($this->mockClassReflection)->getShortName()->thenReturn('BasicTest');
 
         $this->assertEquals('class BasicTest', $this->sut->getClassDeclaration($this->mockClassReflection));
+    }
+
+    public function testFactory()
+    {
+        $factory = new ClassDeclarationServiceFactory();
+
+        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+
+        $this->assertTrue($factory->createService($serviceLocator) instanceof ClassDeclarationService);
     }
 }

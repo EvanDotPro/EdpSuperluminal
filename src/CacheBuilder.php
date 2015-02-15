@@ -32,6 +32,7 @@ class CacheBuilder
 
     /**
      * Cache declared interfaces and classes to a single file
+     * @todo - extract the file_put_contents / php_strip_whitespace calls or figure out a way to mock the filesystem
      *
      * @param string
      * @return void
