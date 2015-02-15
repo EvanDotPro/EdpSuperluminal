@@ -29,24 +29,26 @@ class InterfaceStatementService
 
         $interfaces = array_diff($reflection->getInterfaceNames(), $parent ? $parent->getInterfaceNames() : array());
 
-        if (count($interfaces)) {
+        if (!count($interfaces)) {
 
-            foreach ($interfaces as $interface) {
-                $iReflection = new ClassReflection($interface);
-                $interfaces = array_diff($interfaces, $iReflection->getInterfaceNames());
-            }
-
-            $interfaceStatement .= $reflection->isInterface() ? ' extends ' : ' implements ';
-
-            $classUseNameService = $this->classUseNameService;
-
-            $interfaceStatement .= implode(', ', array_map(function ($interface) use ($classUseNameService, $reflection) {
-
-                $interfaceReflection = new ClassReflection($interface);
-
-                return $classUseNameService->getClassUseName($reflection, $interfaceReflection);
-            }, $interfaces));
+            return $interfaceStatement;
         }
+
+        foreach ($interfaces as $interface) {
+            $iReflection = new ClassReflection($interface);
+            $interfaces = array_diff($interfaces, $iReflection->getInterfaceNames());
+        }
+
+        $interfaceStatement .= $reflection->isInterface() ? ' extends ' : ' implements ';
+
+        $classUseNameService = $this->classUseNameService;
+
+        $interfaceStatement .= implode(', ', array_map(function ($interface) use ($classUseNameService, $reflection) {
+
+            $interfaceReflection = new ClassReflection($interface);
+
+            return $classUseNameService->getClassUseName($reflection, $interfaceReflection);
+        }, $interfaces));
 
         return $interfaceStatement;
     }
