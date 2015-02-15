@@ -4,6 +4,11 @@ namespace EdpSuperluminal\ShouldCacheClass;
 
 use Zend\Code\Reflection\ClassReflection;
 
+/**
+ * This interface is covered by ShouldCacheClassSpecificationTest
+ *
+ * @codeCoverageIgnore
+ */
 interface SpecificationInterface
 {
     /**
