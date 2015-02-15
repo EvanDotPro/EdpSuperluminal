@@ -3,6 +3,7 @@
 namespace EdpSuperluminalTest;
 
 use EdpSuperluminal\ShouldCacheClass\ShouldCacheClassSpecification;
+use EdpSuperluminal\ShouldCacheClass\ShouldCacheClassSpecificationFactory;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
 
@@ -20,13 +21,21 @@ class ShouldCacheClassSpecificationTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->sut = new ShouldCacheClassSpecification();
+        $shouldCacheClassFactory = new ShouldCacheClassSpecificationFactory();
+
+        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+
+        $this->sut = $shouldCacheClassFactory->createService($serviceLocator);
 
         $this->mockClassReflection = Phake::mock('Zend\Code\Reflection\ClassReflection');
     }
 
     public function testShouldCacheIfNoSpecificationsFail()
     {
+        Phake::when($this->mockClassReflection)->getName()->thenReturn('Zend\Some\Class');
+
+        Phake::when($this->mockClassReflection)->getInterfaceNames()->thenReturn(array());
+
         $this->assertTrue($this->sut->isSatisfiedBy($this->mockClassReflection));
     }
 

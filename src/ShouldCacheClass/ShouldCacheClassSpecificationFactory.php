@@ -9,7 +9,7 @@ class ShouldCacheClassSpecificationFactory implements FactoryInterface
 {
     protected $specificationClasses = array(
         'IsNonZendClass',
-        'IsZendAutoLoader',
+        'IsZendAutoloader',
         'IsAnAnnotatedClass',
         'IsZf2BasedAutoloader',
         'IsCoreClass'
@@ -27,7 +27,8 @@ class ShouldCacheClassSpecificationFactory implements FactoryInterface
         $specifications = array();
 
         foreach ($this->specificationClasses as $specificationClass) {
-            $specification = 'EdpSuperluminal\ShouldCacheClass\\' . $specificationClass();
+            $specificationClass = 'EdpSuperluminal\ShouldCacheClass\\' . $specificationClass;
+            $specification = new $specificationClass();
 
             if (!$specification instanceof SpecificationInterface) {
                 throw new \Exception("The specifications provided must implement SpecificationInterface!");
