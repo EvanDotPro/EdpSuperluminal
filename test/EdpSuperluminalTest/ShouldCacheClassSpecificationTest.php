@@ -56,22 +56,22 @@ class ShouldCacheClassSpecificationTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('\Exception');
 
-        $shouldCacheClassFactory = new ShouldCacheClassSpecificationFactory();
+        $shouldCacheClassFactory = new ShouldCacheClassSpecificationFactory(array('FakeClass'));
 
         $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
 
-        $this->sut = $shouldCacheClassFactory->createService($serviceLocator, array('FakeClass'));
+        $this->sut = $shouldCacheClassFactory->createService($serviceLocator);
     }
 
     public function testFactoryThrowsExceptionIfASpecificationDoesNotExist()
     {
         $this->setExpectedException('\Exception');
 
-        $shouldCacheClassFactory = new ShouldCacheClassSpecificationFactory();
+        $shouldCacheClassFactory = new ShouldCacheClassSpecificationFactory(array('Nonexistant'));
 
         $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
 
-        $this->sut = $shouldCacheClassFactory->createService($serviceLocator, array('Nonexistant'));
+        $this->sut = $shouldCacheClassFactory->createService($serviceLocator);
     }
 
     protected function getMockSpecification($isSatisfied = false)

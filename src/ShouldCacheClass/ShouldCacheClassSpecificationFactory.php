@@ -15,6 +15,14 @@ class ShouldCacheClassSpecificationFactory implements FactoryInterface
         'IsCoreClass'
     );
 
+    public function __construct($specificationClasses = null)
+    {
+        if (!is_null($specificationClasses)) {
+            $this->specificationClasses = $specificationClasses;
+        }
+    }
+
+
     /**
      * Create service
      *
@@ -23,15 +31,11 @@ class ShouldCacheClassSpecificationFactory implements FactoryInterface
      * @throws \Exception
      * @return mixed
      */
-    public function createService(ServiceLocatorInterface $serviceLocator, $specificationClasses = null)
+    public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        if (is_null($specificationClasses)) {
-            $specificationClasses = $this->specificationClasses;
-        }
-
         $specifications = array();
 
-        foreach ($specificationClasses as $specificationClass) {
+        foreach ($this->specificationClasses as $specificationClass) {
             $specificationClass = 'EdpSuperluminal\ShouldCacheClass\\' . $specificationClass;
 
             if (!class_exists($specificationClass)) {
