@@ -6,24 +6,21 @@ use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
 use Phake;
 use Zend\Code\Reflection\FileReflection;
 
-class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
+class FileReflectionUseStatementServiceTest extends AbstractSuperluminalTest
 {
     /** @var FileReflectionUseStatementService */
     protected $sut;
 
-    /** @var FileReflection */
-    protected $declaringFile;
-
     public function setUp()
     {
-        $this->sut = new FileReflectionUseStatementService();
+        parent::setUp();
 
-        $this->declaringFile = Phake::mock('Zend\Code\Reflection\FileReflection');
+        $this->sut = new FileReflectionUseStatementService();
     }
 
     public function testReturnsEmptyUseStringIfNoUseStatements()
     {
-        $this->assertEquals('', $this->sut->getUseString($this->declaringFile));
+        $this->assertEquals('', $this->sut->getUseString($this->mockFileReflection));
     }
 
     public function testSingleUseStatement()
@@ -32,9 +29,9 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
 
         $expectedUseString = "use {$namespace};\n";
 
-        Phake::when($this->declaringFile)->getUses()->thenReturn(array(array('use' => $namespace, 'as' => null)));
+        Phake::when($this->mockFileReflection)->getUses()->thenReturn(array(array('use' => $namespace, 'as' => null)));
 
-        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->declaringFile));
+        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->mockFileReflection));
     }
 
     public function testSingleUseWithAsStatement()
@@ -45,9 +42,9 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
 
         $expectedUseString = "use {$namespace} as {$as};\n";
 
-        Phake::when($this->declaringFile)->getUses()->thenReturn(array(array('use' => $namespace, 'as' => $as)));
+        Phake::when($this->mockFileReflection)->getUses()->thenReturn(array(array('use' => $namespace, 'as' => $as)));
 
-        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->declaringFile));
+        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->mockFileReflection));
     }
 
     public function testMultipleUseStatements()
@@ -62,18 +59,18 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
 
         $expectedUseString = "use {$namespace1};\nuse {$namespace2};\nuse {$namespace3} as {$as3};\n";
 
-        Phake::when($this->declaringFile)->getUses()->thenReturn(array(
+        Phake::when($this->mockFileReflection)->getUses()->thenReturn(array(
             array('use' => $namespace1, 'as' => $as1),
             array('use' => $namespace2, 'as' => $as2),
             array('use' => $namespace3, 'as' => $as3)
         ));
 
-        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->declaringFile));
+        $this->assertEquals($expectedUseString, $this->sut->getUseString($this->mockFileReflection));
     }
 
     public function testReturnsEmptyArrayIfTheresNoUseStatements()
     {
-        $this->assertEquals(array(), $this->sut->getUseNames($this->declaringFile));
+        $this->assertEquals(array(), $this->sut->getUseNames($this->mockFileReflection));
     }
 
 
@@ -89,9 +86,9 @@ class FileReflectionUseStatementServiceTest extends \PHPUnit_Framework_TestCase
             'Zend\Mvc\MvcEvent' => null
         );
 
-        Phake::when($this->declaringFile)->getUses()->thenReturn($uses);
+        Phake::when($this->mockFileReflection)->getUses()->thenReturn($uses);
 
-        $this->assertEquals($expected, $this->sut->getUseNames($this->declaringFile));
+        $this->assertEquals($expected, $this->sut->getUseNames($this->mockFileReflection));
     }
 
 

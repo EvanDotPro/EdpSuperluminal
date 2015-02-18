@@ -3,22 +3,20 @@
 namespace EdpSuperluminalTest\ClassDeclaration;
 
 use EdpSuperluminal\ClassDeclaration\ClassTypeService;
+use EdpSuperluminalTest\AbstractSuperluminalTest;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
 
-class ClassTypeServiceTest extends \PHPUnit_Framework_TestCase
+class ClassTypeServiceTest extends AbstractSuperluminalTest
 {
     /** @var ClassTypeService */
     protected $sut;
 
-    /** @var  ClassReflection */
-    protected $mockClassReflection;
-
     public function setUp()
     {
-        $this->sut = new ClassTypeService();
+        parent::setUp();
 
-        $this->mockClassReflection = Phake::mock('Zend\Code\Reflection\ClassReflection');
+        $this->sut = new ClassTypeService();
     }
 
     public function testAnAbstractClass()

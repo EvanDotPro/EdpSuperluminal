@@ -5,50 +5,23 @@ namespace EdpSuperluminalTest\ClassDeclaration;
 use EdpSuperluminal\ClassDeclaration\ClassUseNameService;
 use EdpSuperluminal\ClassDeclaration\ClassUseNameServiceFactory;
 use EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService;
+use EdpSuperluminalTest\AbstractSuperluminalTest;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\FileReflection;
 
-class ClassUseNameServiceTest extends \PHPUnit_Framework_TestCase
+class ClassUseNameServiceTest extends AbstractSuperluminalTest
 {
     /** @var ClassUseNameService */
     protected $sut;
 
-    /**
-     * @var FileReflectionUseStatementService
-     */
-    protected $useStatementService;
-
-    /**
-     * @var ClassReflection
-     */
-    protected $mockClassReflection;
-
-    /**
-     * @var FileReflection
-     */
-    protected $mockFileReflection;
-
     public function setUp()
     {
-        $this->useStatementService = Phake::mock('EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService');
-
-
-        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
-
-        Phake::when($serviceLocator)->get('EdpSuperluminal\ClassDeclaration\UseStatementService')->thenReturn($this->useStatementService);
+        parent::setUp();
 
         $factory = new ClassUseNameServiceFactory();
 
-        $this->sut = $factory->createService($serviceLocator);
-
-        $this->mockClassReflection = Phake::mock('Zend\Code\Reflection\ClassReflection');
-
-        $this->mockFileReflection = Phake::mock('Zend\Code\Reflection\FileReflection');
-
-        Phake::when($this->mockClassReflection)->getDeclaringFile()->thenReturn($this->mockFileReflection);
-
-        Phake::when($this->useStatementService)->getUseNames(Phake::anyParameters())->thenReturn(array());
+        $this->sut = $factory->createService($this->serviceLocator);
     }
 
     public function testAClassWhichHasBeenUsed()

@@ -10,48 +10,16 @@ use Phake;
 use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\FileReflection;
 
-class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
+class CacheCodeGeneratorTest extends AbstractSuperluminalTest
 {
     /** @var CacheCodeGenerator */
     protected $sut;
 
-    /**
-     * @var FileReflectionUseStatementService
-     */
-    protected $fileReflectionService;
-
-    /**
-     * @var ClassDeclarationService
-     */
-    protected $classDeclarationService;
-
-    /**
-     * @var ClassReflection
-     */
-    protected $mockClassReflection;
-
-    /**
-     * @var FileReflection
-     */
-    protected $mockFileReflection;
-
     public function setUp()
     {
-        $this->fileReflectionService = Phake::mock('EdpSuperluminal\ClassDeclaration\FileReflectionUseStatementService');
-
-        $this->classDeclarationService = Phake::mock('EdpSuperluminal\ClassDeclaration\ClassDeclarationService');
+        parent::setUp();
 
         $this->sut = new CacheCodeGenerator($this->fileReflectionService, $this->classDeclarationService);
-
-        $this->mockClassReflection = Phake::mock('Zend\Code\Reflection\ClassReflection');
-
-        $this->mockFileReflection = Phake::mock('Zend\Code\Reflection\FileReflection');
-
-        Phake::when($this->mockClassReflection)->getDeclaringFile()->thenReturn($this->mockFileReflection);
-
-        Phake::when($this->mockFileReflection)->getUses()->thenReturn(array());
-
-        Phake::when($this->mockClassReflection)->getInterfaceNames()->thenReturn(array());
     }
 
     public function testThatItPutsTheCacheCodeTogether()
@@ -71,12 +39,7 @@ class CacheCodeGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $cacheCodeGeneratorFactory = new CacheCodeGeneratorFactory();
 
-        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
-
-        Phake::when($serviceLocator)->get('EdpSuperluminal\ClassDeclarationService')->thenReturn($this->classDeclarationService);
-        Phake::when($serviceLocator)->get('EdpSuperluminal\ClassDeclaration\UseStatementService')->thenReturn(new FileReflectionUseStatementService());
-
-        $this->assertTrue($cacheCodeGeneratorFactory->createService($serviceLocator) instanceof CacheCodeGenerator);
+        $this->assertTrue($cacheCodeGeneratorFactory->createService($this->serviceLocator) instanceof CacheCodeGenerator);
     }
 
 

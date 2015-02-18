@@ -6,22 +6,22 @@ use EdpSuperluminal\CacheBuilder;
 use EdpSuperluminal\CacheBuilderFactory;
 use Phake;
 
-class CacheBuilderTest extends \PHPUnit_Framework_TestCase
+class CacheBuilderTest extends AbstractSuperluminalTest
 {
     public function testFactory()
     {
-        $factory = new CacheBuilderFactory();
+        parent::setUp();
 
-        $serviceLocator = Phake::mock('Zend\ServiceManager\ServiceLocatorInterface');
+        $factory = new CacheBuilderFactory();
 
         $cacheCodeGenerator = Phake::mock('EdpSuperluminal\CacheCodeGenerator');
 
-        Phake::when($serviceLocator)->get('EdpSuperluminal\CacheCodeGenerator')->thenReturn($cacheCodeGenerator);
+        Phake::when($this->serviceLocator)->get('EdpSuperluminal\CacheCodeGenerator')->thenReturn($cacheCodeGenerator);
 
         $shouldCacheClass = Phake::mock('EdpSuperluminal\ShouldCacheClass\ShouldCacheClassSpecification');
 
-        Phake::when($serviceLocator)->get('EdpSuperluminal\ShouldCacheClass')->thenReturn($shouldCacheClass);
+        Phake::when($this->serviceLocator)->get('EdpSuperluminal\ShouldCacheClass')->thenReturn($shouldCacheClass);
 
-        $this->assertTrue($factory->createService($serviceLocator) instanceof CacheBuilder);
+        $this->assertTrue($factory->createService($this->serviceLocator) instanceof CacheBuilder);
     }
 }

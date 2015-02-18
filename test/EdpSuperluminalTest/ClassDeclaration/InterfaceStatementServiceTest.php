@@ -5,11 +5,12 @@ namespace EdpSuperluminalTest\ClassDeclaration;
 use EdpSuperluminal\ClassDeclaration\ClassUseNameService;
 use EdpSuperluminal\ClassDeclaration\ExtendsStatementService;
 use EdpSuperluminal\ClassDeclaration\InterfaceStatementService;
+use EdpSuperluminalTest\AbstractSuperluminalTest;
 use Phake;
 use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\FileReflection;
 
-class InterfaceStatementServiceTest extends \PHPUnit_Framework_TestCase
+class InterfaceStatementServiceTest extends AbstractSuperluminalTest
 {
     /** @var InterfaceStatementService */
     protected $sut;
@@ -17,29 +18,13 @@ class InterfaceStatementServiceTest extends \PHPUnit_Framework_TestCase
     /** @var ClassUseNameService */
     protected $classUseNameService;
 
-    /**
-     * @var ClassReflection
-     */
-    protected $mockClassReflection;
-
-    /**
-     * @var FileReflection
-     */
-    protected $mockFileReflection;
-
     public function setUp()
     {
+        parent::setUp();
+
         $this->classUseNameService = Phake::mock('EdpSuperluminal\ClassDeclaration\ClassUseNameService');
 
         $this->sut = new InterfaceStatementService($this->classUseNameService);
-
-        $this->mockClassReflection = Phake::mock('Zend\Code\Reflection\ClassReflection');
-
-        Phake::when($this->mockClassReflection)->getInterfaceNames()->thenReturn(array());
-
-        $this->mockFileReflection = Phake::mock('Zend\Code\Reflection\FileReflection');
-
-        Phake::when($this->mockClassReflection)->getDeclaringFile()->thenReturn($this->mockFileReflection);
 
         Phake::when($this->mockClassReflection)->getNamespaceName()->thenReturn('Zend');
     }
