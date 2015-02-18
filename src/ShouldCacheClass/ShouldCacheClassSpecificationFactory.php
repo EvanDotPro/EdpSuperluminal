@@ -10,6 +10,7 @@ class ShouldCacheClassSpecificationFactory implements FactoryInterface
     protected $specificationClasses = array(
         'IsNonZendClass',
         'IsZendAutoloader',
+        'IsAnAnnotatedClass',
         'IsZf2BasedAutoloader',
         'IsCoreClass'
     );
