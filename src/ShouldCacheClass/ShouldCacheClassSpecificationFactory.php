@@ -26,7 +26,6 @@ class ShouldCacheClassSpecificationFactory implements FactoryInterface
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @param array|null $specificationClasses
      * @throws \Exception
      * @return mixed
      */
