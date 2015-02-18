@@ -16,7 +16,7 @@ class IsAnAnnotatedClass implements SpecificationInterface
         $docBlock = $class->getDocBlock();
         if ($docBlock) {
 
-            if ($docBlock->getTags()) {
+            if ($docBlock->getTags('Annotation')) {
                 return true;
             }
         }
