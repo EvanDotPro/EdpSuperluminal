@@ -37,8 +37,3 @@ define('ZF_CLASS_CACHE', 'data/cache/classes.php.cache'); if (file_exists(ZF_CLA
 
 - Once the cache is built, you can disable and delete EdpSuperluminal, leaving
   line you added to `public/index.php`.
-
-Running the tests
------------------
-
-./vendor/bin/phpunit --bootstrap vendor/autoload.php test
