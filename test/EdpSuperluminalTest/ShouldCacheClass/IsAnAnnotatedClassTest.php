@@ -37,7 +37,7 @@ class IsAnAnnotatedClassTest extends \PHPUnit_Framework_TestCase
 }
 
 /**
- * @annotation
+ * @Annotation
  */
 class AnnotatedClass
 {
