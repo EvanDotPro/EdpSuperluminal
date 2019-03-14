@@ -54,6 +54,11 @@ class Module
             if (0 !== strpos($class, 'Zend')) {
                 continue;
             }
+            
+            // Skip non-Interop classes
+            if (0 !== strpos($class, 'Interop')) {
+                continue;
+            }
 
             // Skip the autoloader factory and this class
             if (in_array($class, array('Zend\Loader\AutoloaderFactory', __CLASS__))) {
